@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a1410">
+<title>Adithya &amp; Rishita's Wedding</title>
+<style>
+  @import url('https://googleapis.com');
+  :root { --parchment: #efe4cd; --parchment-dark: #e3d4b3; --ink: #4a3524; --ink-soft: #6b5640; --maroon-deep: #5c1a25; --gold: #b8892f; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+  html, body { height: 100%; background: #000; font-family: 'EB Garamond', serif; overflow: hidden; }
+  .screen { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
+  #sliderScreen { background: #000; z-index: 1; }
+  .slides-container { width: 100vw; height: 100vh; height: 100dvh; position: relative; overflow: hidden; }
+  .slide { position: absolute; inset: 0; opacity: 0; transition: opacity 0.8s ease-in-out; background-size: contain; background-position: center; background-repeat: no-repeat; background-color: #fbf9f4; display: flex; align-items: flex-end; justify-content: center; }
+  .slide.active { opacity: 1; }
+  
+  /* Restored Playback Bar Styles */
+  .controls-overlay { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 24px; z-index: 10; background: rgba(26, 20, 16, 0.75); padding: 12px 28px; border-radius: 40px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(184, 137, 47, 0.4); box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+  .control-btn { background: none; border: none; color: #fbf3df; font-size: 1.3rem; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; transition: background 0.2s; }
+  .control-btn:active { background: rgba(255, 255, 255, 0.2); }
+
+  /* Single Temple Cover Configuration */
+  .gate-overlay { position: fixed; inset: 0; z-index: 15; display: flex; overflow: hidden; background: #000; }
+  .gate { width: 50vw; height: 100vh; height: 100dvh; position: relative; overflow: hidden; transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1); }
+  .gate-half { width: 100vw; height: 100vh; height: 100dvh; position: absolute; top: 0; background-size: contain; background-position: center; background-repeat: no-repeat; background-color: #fbf9f4; background-image: url('temple.png'); }
+  .left-gate .gate-half { left: 0; }
+  .right-gate .gate-half { right: 0; }
+  .gate-overlay.open .left-gate { transform: translateX(-100%); }
+  .gate-overlay.open .right-gate { transform: translateX(100%); }
+
+  #rsvpScreen { flex-direction: column; gap: 28px; padding: 36px; text-align: center; background: radial-gradient(ellipse at 50% -10%, #fbf6ea 0%, var(--parchment) 55%, var(--parchment-dark) 100%); z-index: 5; display: none; }
+  .title { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: var(--maroon-deep); font-size: clamp(1.8rem, 7vw, 2.6rem); line-height: 1.2; }
+  .rsvp-btn { display: inline-block; font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(1.2rem, 4.5vw, 1.5rem); color: #fbf3df; background: linear-gradient(160deg, var(--maroon-deep), #7c2331); padding: 16px 54px; border-radius: 44px; text-decoration: none; box-shadow: 0 12px 26px -6px rgba(92,26,37,0.55); border: 1px solid var(--gold); }
+  .rsvp-caption { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 500; color: var(--ink); font-size: clamp(1.15rem, 4vw, 1.4rem); max-width: 380px; }
+  .replay-link { font-family: 'EB Garamond', serif; font-style: italic; color: var(--ink-soft); text-decoration: underline; background: none; border: none; cursor: pointer; font-size: 1.05rem; padding: 8px; margin-top: 15px; }
+  #hiddenAudioWrapper { position: absolute; width: 1px; height: 1px; opacity: 0.01; pointer-events: none; overflow: hidden; }
+</style>
+</head>
+<body onclick="handleGlobalInteraction()" ontouchstart="handleGlobalInteraction()" onscroll="handleGlobalInteraction()" ontouchmove="handleGlobalInteraction()">
+
+<div id="hiddenAudioWrapper">
+  <video id="bgMusic" loop autoplay muted playsinline preload="auto">
+    <source src="music.mp3.mp4" type="video/mp4">
+  </video>
+</div>
+
+<div id="gateScreen" class="gate-overlay">
+  <div class="gate left-gate" id="leftGate"><div class="gate-half"></div></div>
+  <div class="gate right-gate" id="rightGate"><div class="gate-half"></div></div>
+</div>
+
+<div class="screen" id="sliderScreen">
+  <div class="slides-container">
+    <div class="slide active" id="slide1" style="background-image: url('haldi.png');"></div>
+    <div class="slide" id="slide2" style="background-image: url('maapillai.png');"></div>
+    <div class="slide" id="slide3" style="background-image: url('marriage.png');"></div>
+    <div class="slide" id="slide4" style="background-image: url('reception.png');"></div>
+  </div>
+  
+  <!-- Interactive Navigation Controls Layout Bar -->
+  <div class="controls-overlay" id="controlsUI" style="display: none;">
+    <button class="control-btn" onclick="prevSlide(event)">◀</button>
+    <button class="control-btn" id="playPauseBtn" onclick="togglePlayPause(event)">⏸</button>
+    <button class="control-btn" onclick="nextSlide(event)">▶</button>
+  </div>
+</div>
+
+<div class="screen" id="rsvpScreen">
+  <div class="title">Rishita &amp; Adithya</div>
+  <a href="https://withjoy.com" target="_blank" rel="noopener noreferrer" class="rsvp-btn">RSVP</a>
+  <div class="rsvp-caption">Please RSVP to help us plan our celebrations</div>
+  <button class="replay-link" onclick="restartInvitation(event)">View Invitation Again</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  let currentIdx = 0, slideInterval = null, isPaused = false, hasInteracted = false, gateOpened = false;
+  const slideDuration = 15000;
+  const audio = document.getElementById('bgMusic'), playPauseBtn = document.getElementById('playPauseBtn');
+  let fadeTimeoutId = null;
+
+  function handleGlobalInteraction() {
+    if (hasInteracted) return;
+    hasInteracted = true;
+    audio.muted = false;
+    audio.currentTime = 110;
+    audio.play().catch(e => {
+      hasInteracted = false;
+      console.log("Audio pipeline sync on gesture:", e);
+    });
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    audio.muted = false;
+    audio.play().then(() => { 
+      audio.currentTime = 110; hasInteracted = true; 
+    }).catch(() => {
+      audio.muted = true; audio.currentTime = 110; audio.play().catch(() => {});
+    });
+
+    setTimeout(() => {
+      gateOpened = true;
+      document.getElementById('gateScreen').classList.add('open');
+      setTimeout(() => {
+        document.getElementById('gateScreen').style.display = 'none';
+        document.getElementById('controlsUI').style.display = 'flex';
+        startTimer();
+      }, 1200);
+    }, 5000); 
+  });
+
+  function startTimer() {
+    clearInterval(slideInterval);
+    if (!isPaused && gateOpened) { slideInterval = setInterval(nextSlide, slideDuration); }
+  }
+
+  function showSlide(index) {
+    slides[currentIdx].classList.remove('active'); currentIdx = index;
+    if (currentIdx >= slides.length) {
+      clearInterval(slideInterval);
+      document.getElementById('controlsUI').style.display = 'none';
+      document.getElementById('sliderScreen').style.display = 'none';
+      document.getElementById('rsvpScreen').style.display = 'flex';
+      triggerUniversalAudioStopEngine();
+    } else { slides[currentIdx].classList.add('active'); startTimer(); }
+  }
+
+  function triggerUniversalAudioStopEngine() {
+    clearTimeout(fadeTimeoutId);
+    fadeTimeoutId = setTimeout(() => {
+      audio.pause();
+      audio.currentTime = 110;
+    }, 5000);
+  }
+
+  function nextSlide(e) { if(e) e.stopPropagation(); showSlide(currentIdx + 1); }
+  function prevSlide(e) { if(e) e.stopPropagation(); if (currentIdx > 0) { showSlide(currentIdx - 1); } }
+
+  function togglePlayPause(e) {
+    if(e) e.stopPropagation(); 
+    isPaused = !isPaused;
+    if (isPaused) { clearInterval(slideInterval); playPauseBtn.textContent = '▶'; } 
+    else { playPauseBtn.textContent = '⏸'; startTimer(); }
+  }
+
+  function restartInvitation(e) {
+    if(e) e.stopPropagation();
+    clearTimeout(fadeTimeoutId);
+    audio.pause(); audio.muted = false;
+    
+    document.getElementById('rsvpScreen').style.display = 'none';
+    document.getElementById('sliderScreen').style.display = 'flex';
+    document.getElementById('gateScreen').style.display = 'flex';
+    document.getElementById('gateScreen').classList.remove('open');
+    isPaused = false; gateOpened = false; playPauseBtn.textContent = '⏸';
+    currentIdx = 0; hasInteracted = false;
+    
+    slides.forEach(s => s.classList.remove('active'));
+    slides.classList.add('active');
+    
+    audio.play().then(() => { audio.currentTime = 110; hasInteracted = true; }).catch(() => {});
+    
+    setTimeout(() => {
+      gateOpened = true; document.getElementById('gateScreen').classList.add('open');
+      setTimeout(() => {
+        document.getElementById('gateScreen').style.display = 'none';
+        document.getElementById('controlsUI').style.display = 'flex';
+        startTimer();
+      }, 1200);
+    }, 5000);
+  }
+</script>
+</body>
+</html>
