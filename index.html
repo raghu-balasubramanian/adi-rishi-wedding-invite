@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Rishita & Adithya's Wedding Invitation</title>
     <style>
         * {
@@ -10,46 +10,56 @@
             margin: 0;
             padding: 0;
         }
-        body {
-            font-family: 'Georgia', serif;
+        /* Forces the web page canvas to lock to device boundaries without scrolling */
+        html, body {
+            width: 100%;
+            height: 100vh;
+            height: -webkit-fill-available; /* Smooth structural compatibility for mobile Safari navigation bars */
+            overflow: hidden;
             background-color: #f5eedc;
+            font-family: 'Georgia', serif;
+        }
+        body {
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            padding: 10px;
-            -webkit-text-size-adjust: 100%;
         }
-        /* Mobile-First Floating Layout Frame */
+        /* DEVICE-AGNOSTIC SLIDER FRAME: Scales perfectly up to max container proportions */
         .slider-container {
             position: relative;
             width: 100%;
-            max-width: 500px;
+            height: 100%;
+            max-width: 540px; /* Golden standard width for mobile view rendering on desktop monitors */
             background: #ffffff;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
-            border-radius: 16px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
             overflow: hidden;
         }
+        /* Full viewport height card slide window elements */
         .slide-item {
             display: none;
             width: 100%;
+            height: 100%;
             animation: fadeIn 0.4s ease-in-out;
         }
+        /* Smart full-viewport aspect engine locks images cleanly without distortion */
         .slide-item img {
             width: 100%;
-            height: auto;
+            height: 100%;
+            object-fit: contain; /* Guarantees layout graphics are never cropped or stretched on unusual displays */
+            object-position: center;
             display: block;
+            background-color: #f5eedc; /* Fills empty side space on ultra-wide screens smoothly */
         }
         
-        /* Temple Clickable Wrapper Styling */
+        /* Temple Clickable Wrapper Layout */
         .temple-click-wrapper {
             cursor: pointer;
             width: 100%;
+            height: 100%;
             position: relative;
         }
 
-        /* ANIMATED ARROW & KNOCKING INDICATOR */
+        /* ANIMATED ARROW & KNOCKING INDICATOR COVERS */
         .knocking-indicator {
             position: absolute;
             top: 50%;
@@ -81,16 +91,17 @@
             animation: hintPulse 2s infinite ease-in-out;
         }
 
-        /* Customized RSVP Screen */
+        /* Customized Full-Screen RSVP Layout Dashboard */
         .rsvp-slide-content {
             background-color: #f7ebd3;
-            padding: 70px 25px;
+            width: 100%;
+            height: 100%;
+            padding: 40px 25px;
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 450px;
         }
         .rsvp-names {
             color: #6a1b29;
@@ -104,13 +115,13 @@
             background-color: #6a1b29;
             color: #ffffff;
             text-decoration: none;
-            padding: 14px 55px;
+            padding: 15px 55px;
             font-size: 18px;
             font-style: italic;
             font-weight: bold;
             letter-spacing: 1px;
             border-radius: 30px;
-            box-shadow: 0 4px 15px rgba(106, 27, 41, 0.2);
+            box-shadow: 0 5px 18px rgba(106, 27, 41, 0.3);
             border: 1px solid #54121e;
             -webkit-appearance: none;
             margin-bottom: 35px;
@@ -135,10 +146,10 @@
             font-style: italic;
         }
 
-        /* SEMI-TRANSPARENT FLOATING BUTTONS OVERLAY */
+        /* SEMI-TRANSPARENT FLOATING CONTROLS LAYER */
         .slider-controls {
             position: absolute;
-            bottom: 30px; 
+            bottom: 4vh; /* Binds spacing dynamically relative to device height metrics */
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -152,28 +163,28 @@
             transition: opacity 0.3s ease;
         }
         .control-btn {
-            background-color: rgba(61, 90, 69, 0.3); 
-            color: rgba(255, 255, 255, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background-color: rgba(61, 90, 69, 0.35); 
+            color: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.25);
             padding: 10px;
             font-size: 16px;
             font-weight: bold;
             border-radius: 50%;
             cursor: pointer;
-            width: 46px;
-            height: 46px;
+            width: 48px;
+            height: 48px;
             display: flex;
             align-items: center;
             justify-content: center;
             -webkit-appearance: none;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            backdrop-filter: blur(3px);
-            -webkit-backdrop-filter: blur(3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
             transition: background-color 0.2s ease, transform 0.1s ease;
         }
         .control-btn:active {
-            transform: scale(0.95);
-            background-color: rgba(61, 90, 69, 0.6);
+            transform: scale(0.93);
+            background-color: rgba(61, 90, 69, 0.65);
         }
 
         @keyframes moveAndKnock {
@@ -200,7 +211,7 @@
     <!-- Target Audio File -->
     <audio id="bgMusic" src="music.mp3.mp4" loop preload="auto"></audio>
 
-    <!-- Main Container Box -->
+    <!-- Main View container Wrapper Box -->
     <div class="slider-container">
         <!-- Slide 0: Temple Theme Cover -->
         <div class="slide-item">
@@ -213,22 +224,22 @@
             </div>
         </div>
         
-        <!-- Slide 1: Haldi Ceremony (Dec 3, 11 AM) -->
+        <!-- Slide 1: Haldi Ceremony -->
         <div class="slide-item">
             <img src="haldi.png" alt="Haldi Ceremony Invitation">
         </div>
 
-        <!-- Slide 2: Maapillai Azhaippu (Dec 3, 6 PM) -->
+        <!-- Slide 2: Maapillai Azhaippu -->
         <div class="slide-item">
             <img src="maapillai.png" alt="Maapillai Azhaippu Invitation">
         </div>
 
-        <!-- Slide 3: Main Marriage Muhurtham (Dec 4) -->
+        <!-- Slide 3: Main Marriage Muhurtham -->
         <div class="slide-item">
             <img src="marriage.png" alt="Main Wedding Muhurtham Card">
         </div>
 
-        <!-- Slide 4: Wedding Reception (Jan 17) -->
+        <!-- Slide 4: Wedding Reception -->
         <div class="slide-item">
             <img src="reception.png" alt="Wedding Reception Invitation">
         </div>
@@ -238,8 +249,7 @@
             <div class="rsvp-slide-content">
                 <h1 class="rsvp-names">Rishita & Adithya</h1>
                 
-                <!-- Hardcoded RSVP Link Anchor Component with an dynamic link execution engine -->
-                <a href="https://withjoy.com/rishitadithya/rsvp?utm_medium=web&utm_source=guest_site_nav&utm_campaign=nav_menu_rsvp" 
+                <a href="https://withjoy.com" 
                    target="_blank" 
                    rel="noopener noreferrer" 
                    class="rsvp-link-btn" 
@@ -253,7 +263,7 @@
             </div>
         </div>
 
-        <!-- Floating Controls Frame Layer -->
+        <!-- Floating Controls Toolbar Frame Layer -->
         <div class="slider-controls" id="controlsToolbar">
             <button class="control-btn" onclick="navigateSlides(-1)" aria-label="Backward">◀</button>
             <button class="control-btn" id="playPauseBtn" onclick="toggleAutoplay()" aria-label="Pause">⏸</button>
@@ -288,39 +298,35 @@
             
             allSlides[currentSlide].style.display = "block";  
 
-            /* Hide interface elements on Temple (0) and RSVP (rsvpSlideIndex) screens */
+            /* Controls the visibility state of navigation toolbar relative to indices */
             if (currentSlide === 0 || currentSlide === rsvpSlideIndex) {
                 controlsToolbar.style.display = "none";
             } else {
                 controlsToolbar.style.display = "flex";
             }
 
-            /* Freeze auto-rotation loop upon arriving at RSVP card screen layout */
+            /* Freeze auto-rotation loops upon arriving at final slide screen */
             if (currentSlide === rsvpSlideIndex) {
                 clearAutoplay(); 
             }
         }
 
-        /* FORCE ROUTING ENGINE: Appends a unique dynamic stamp variable to explicitly break mobile cache */
+        /* CACHE DISRUPTOR LOGIC: Enforces absolute redirect tracking routing execution paths */
         if (rsvpButton) {
             rsvpButton.addEventListener("click", function(event) {
                 event.preventDefault();
                 
-                // Immediately pause background tracks
                 if (music && !music.paused) {
                     music.pause();
                     isAutoplayActive = false;
                     playPauseButton.innerHTML = "▶";
                 }
                 
-                const targetBaseUrl = "https://withjoy.com/rishitadithya/rsvp";
+                const targetBaseUrl = "https://withjoy.com";
                 const trackingParams = "?utm_medium=web&utm_source=guest_site_nav&utm_campaign=nav_menu_rsvp";
-                
-                // Creates a random numeric variable value string to force a unique cache-breaking pathway lookup
                 const cacheBusterString = "&cb=" + new Date().getTime() + Math.random().toString(36).substring(2, 7);
                 const finalUncachedUrl = targetBaseUrl + trackingParams + cacheBusterString;
                 
-                // Forces Safari to launch the explicit uncached link structure in a clean standalone window display page
                 window.open(finalUncachedUrl, "_blank");
             });
         }
@@ -372,7 +378,7 @@
                 isAutoplayActive = true;
                 playPauseButton.innerHTML = "⏸";
                 if (music && currentSlide !== rsvpSlideIndex) {
-                    music.play().catch(err => console.log("Audio resume engine catch"));
+                    music.play().catch(err => console.log("Audio pipeline reset catch"));
                 }
                 renderSlide(); 
                 if (currentSlide !== rsvpSlideIndex) {
@@ -396,7 +402,7 @@
             if (music) {
                 music.volume = 1.0;
                 music.currentTime = 0;
-                music.play().catch(err => console.log("Audio restart exception trace caught"));
+                music.play().catch(err => console.log("Audio loop reset error exception trace caught"));
             }
             
             startAutoplay();
@@ -404,7 +410,7 @@
 
         function kickstartAudio() {
             if (music && music.paused && isAutoplayActive && currentSlide !== rsvpSlideIndex) {
-                music.play().catch(err => console.log("Audio track touch kickstart validation failure trace"));
+                music.play().catch(err => console.log("Audio track initial manual activation state trace fallback"));
             }
         }
 
