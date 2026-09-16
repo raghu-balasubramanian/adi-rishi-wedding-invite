@@ -249,7 +249,8 @@
             <div class="rsvp-slide-content">
                 <h1 class="rsvp-names">Rishita & Adithya</h1>
                 
-                <a href="https://withjoy.com" 
+                <!-- Hardcoded RSVP Link Component with the explicit tracking URL parameters -->
+                <a href="https://withjoy.com/rishitadithya/rsvp?utm_medium=web&utm_source=guest_site_nav&utm_campaign=nav_menu_rsvp" 
                    target="_blank" 
                    rel="noopener noreferrer" 
                    class="rsvp-link-btn" 
@@ -311,23 +312,39 @@
             }
         }
 
-        /* CACHE DISRUPTOR LOGIC: Enforces absolute redirect tracking routing execution paths */
+        /* FORCE ROUTING MATRIX: Implements triple redundancy override to defeat mobile cache and sandboxing */
         if (rsvpButton) {
             rsvpButton.addEventListener("click", function(event) {
+                // Prevent default behavior to take complete programmatic control of routing
                 event.preventDefault();
                 
+                // Instantly silence the music track
                 if (music && !music.paused) {
                     music.pause();
                     isAutoplayActive = false;
                     playPauseButton.innerHTML = "▶";
                 }
                 
-                const targetBaseUrl = "https://withjoy.com";
-                const trackingParams = "?utm_medium=web&utm_source=guest_site_nav&utm_campaign=nav_menu_rsvp";
-                const cacheBusterString = "&cb=" + new Date().getTime() + Math.random().toString(36).substring(2, 7);
-                const finalUncachedUrl = targetBaseUrl + trackingParams + cacheBusterString;
+                // Complete explicit tracking URL target destination
+                const absoluteRsvpUrl = "https://withjoy.com/rishitadithya/rsvp?utm_medium=web&utm_source=guest_site_nav&utm_campaign=nav_menu_rsvp";
                 
-                window.open(finalUncachedUrl, "_blank");
+                // Add unique time properties string to force cache destruction on iOS Safari
+                const cacheBusterString = "&cachebust=" + new Date().getTime() + Math.random().toString(36).substring(2, 7);
+                const finalUncachedUrl = absoluteRsvpUrl + cacheBusterString;
+                
+                // Layer 1 Execution: Direct viewport context window thread launch
+                let newWindow = window.open(finalUncachedUrl, "_blank", "noopener,noreferrer");
+                
+                // Layer 2 Fallback: If window.open is blocked or acts up, force anchor emulation routing
+                if (!newWindow || newWindow.closed || typeof newWindow === "undefined") {
+                    const shadowAnchor = document.createElement("a");
+                    shadowAnchor.href = finalUncachedUrl;
+                    shadowAnchor.target = "_blank";
+                    shadowAnchor.rel = "noopener noreferrer";
+                    document.body.appendChild(shadowAnchor);
+                    shadowAnchor.click();
+                    document.body.removeChild(shadowAnchor);
+                }
             });
         }
 
@@ -378,7 +395,7 @@
                 isAutoplayActive = true;
                 playPauseButton.innerHTML = "⏸";
                 if (music && currentSlide !== rsvpSlideIndex) {
-                    music.play().catch(err => console.log("Audio pipeline reset catch"));
+                    music.play().catch(err => console.log("Audio resume engine catch"));
                 }
                 renderSlide(); 
                 if (currentSlide !== rsvpSlideIndex) {
