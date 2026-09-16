@@ -238,11 +238,12 @@
             <div class="rsvp-slide-content">
                 <h1 class="rsvp-names">Rishita & Adithya</h1>
                 
-                <a href="https://withjoy.com" 
+                <!-- Hardcoded RSVP Link Anchor Component with an dynamic link execution engine -->
+                <a href="https://withjoy.com/rishitadithya/rsvp?utm_medium=web&utm_source=guest_site_nav&utm_campaign=nav_menu_rsvp" 
                    target="_blank" 
                    rel="noopener noreferrer" 
                    class="rsvp-link-btn" 
-                   onclick="handleRsvpClick(); window.open('https://withjoy.com', '_blank'); return false;">
+                   id="forceRsvpButton">
                     RSVP
                 </a>
                 
@@ -271,8 +272,8 @@
         const controlsToolbar = document.getElementById("controlsToolbar");
         const knockingContainer = document.getElementById("knockingContainer");
         const music = document.getElementById("bgMusic");
+        const rsvpButton = document.getElementById("forceRsvpButton");
 
-        // The final slide index changes to 5 because we added the 5th image asset
         const rsvpSlideIndex = 5;
 
         function renderSlide() {
@@ -300,12 +301,28 @@
             }
         }
 
-        function handleRsvpClick() {
-            if (music && !music.paused) {
-                music.pause();
-                isAutoplayActive = false;
-                playPauseButton.innerHTML = "▶";
-            }
+        /* FORCE ROUTING ENGINE: Appends a unique dynamic stamp variable to explicitly break mobile cache */
+        if (rsvpButton) {
+            rsvpButton.addEventListener("click", function(event) {
+                event.preventDefault();
+                
+                // Immediately pause background tracks
+                if (music && !music.paused) {
+                    music.pause();
+                    isAutoplayActive = false;
+                    playPauseButton.innerHTML = "▶";
+                }
+                
+                const targetBaseUrl = "https://withjoy.com/rishitadithya/rsvp";
+                const trackingParams = "?utm_medium=web&utm_source=guest_site_nav&utm_campaign=nav_menu_rsvp";
+                
+                // Creates a random numeric variable value string to force a unique cache-breaking pathway lookup
+                const cacheBusterString = "&cb=" + new Date().getTime() + Math.random().toString(36).substring(2, 7);
+                const finalUncachedUrl = targetBaseUrl + trackingParams + cacheBusterString;
+                
+                // Forces Safari to launch the explicit uncached link structure in a clean standalone window display page
+                window.open(finalUncachedUrl, "_blank");
+            });
         }
 
         function startOnTempleClick() {
@@ -355,7 +372,7 @@
                 isAutoplayActive = true;
                 playPauseButton.innerHTML = "⏸";
                 if (music && currentSlide !== rsvpSlideIndex) {
-                    music.play().catch(err => console.log("Audio pipeline reset catch"));
+                    music.play().catch(err => console.log("Audio resume engine catch"));
                 }
                 renderSlide(); 
                 if (currentSlide !== rsvpSlideIndex) {
